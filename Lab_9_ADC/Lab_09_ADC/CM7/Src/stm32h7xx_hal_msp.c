@@ -118,7 +118,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef *hadc)
   ADCx_RELEASE_RESET();
   /* ADC Periph clock disable
    (automatically reset all ADC's) */
-  __HAL_RCC_ADC12_CLK_DISABLE();
+  __HAL_RCC_ADC3_CLK_DISABLE();
 
   /*##-2- Disable peripherals and GPIO Clocks ################################*/
   /* De-initialize the ADC Channel GPIO pin */

@@ -199,13 +199,25 @@ int main(void)
       Error_Handler();
     }
 
+    if (HAL_DAC_Start(&DacHandle, DACx_CHANNEL) != HAL_OK)
+    	      {
+    	        /* Start Error */
+    	        Error_Handler();
+    	      }
+
     float DACValue_0 = 0;
     float DACValue_15 = 1.5 * 256 / 3.3;
     float DACValue_33 = 3.3 * 256 / 3.3;;
 
+    if(DACValue_33 > 255)
+    {
+    	DACValue_33 = 255.0f;
+    }
+
     float DACValue[3] = {DACValue_0, DACValue_15, DACValue_33};
 
     uint16_t data_queue = 0;
+
 
   /* Infinite loop */
   while (1)
@@ -217,12 +229,6 @@ int main(void)
 	  		      /* Setting value Error */
 	  		      Error_Handler();
 	  		    }
-
-	  if (HAL_DAC_Start(&DacHandle, DACx_CHANNEL) != HAL_OK)
-	      {
-	        /* Start Error */
-	        Error_Handler();
-	      }
 
     /*##-3- Start the conversion process #######################################*/
     if (HAL_ADC_Start(&AdcHandle) != HAL_OK)
