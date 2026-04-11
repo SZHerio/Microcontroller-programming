@@ -134,7 +134,7 @@ int main(void)
   AdcHandle.Init.ScanConvMode             = ENABLE;                       /* Sequencer disabled (ADC conversion on only 1 channel: channel set on rank 1) */
   AdcHandle.Init.EOCSelection             = ADC_EOC_SINGLE_CONV;           /* EOC flag picked-up to indicate conversion end */
   AdcHandle.Init.LowPowerAutoWait         = DISABLE;                       /* Auto-delayed conversion feature disabled */
-  AdcHandle.Init.ContinuousConvMode       = ENABLE;                       /* Continuous mode disabled to have only 1 conversion at each conversion trig */
+  AdcHandle.Init.ContinuousConvMode       = DISABLE;                       /* Continuous mode disabled to have only 1 conversion at each conversion trig */
   AdcHandle.Init.NbrOfConversion          = 2;                             /* Parameter discarded because sequencer is disabled */
   AdcHandle.Init.DiscontinuousConvMode    = ENABLE;                       /* Parameter discarded because sequencer is disabled */
   AdcHandle.Init.NbrOfDiscConversion      = 1;                             /* Parameter discarded because sequencer is disabled */
@@ -184,8 +184,11 @@ int main(void)
     Error_Handler();
   }
 
-  uint16_t value_x = 0;
-  uint16_t value_y = 0;
+  int32_t value_x = 0;
+  int32_t value_y = 0;
+
+  int32_t ADCxConvertedValue_x;
+  int32_t ADCxConvertedValue_y;
 
   /* Infinite loop */
   while (1)
@@ -211,8 +214,7 @@ int main(void)
     	value_x = HAL_ADC_GetValue(&AdcHandle);
       /* ADC conversion completed */
       /*##-5- Get the converted value of regular channel  ########################*/
-    	uint16_t ADCxConvertedValue_x = (value_x - 32768) * 100 / 32768;
-    	printf("%d\r\n", ADCxConvertedValue_x);
+     ADCxConvertedValue_x = (value_x - 32768) * 100 / 32768;
     }
 
 
@@ -232,11 +234,10 @@ int main(void)
         	value_y = HAL_ADC_GetValue(&AdcHandle);
           /* ADC conversion completed */
           /*##-5- Get the converted value of regular channel  ########################*/
-          uint16_t ADCxConvertedValue_y = (value_y - 32768) * 100 / 32768;
-          printf("%d\r\n", ADCxConvertedValue_y);
+         ADCxConvertedValue_y = (value_y - 32768) * 100 / 32768;
         }
 
-    printf("\n");
+    printf("x: %d, y: %d\r\n", ADCxConvertedValue_x, ADCxConvertedValue_y);
     HAL_Delay(1);
   }
 }

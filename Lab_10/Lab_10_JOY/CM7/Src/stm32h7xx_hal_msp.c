@@ -123,7 +123,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef *hadc)
 
   /*##-2- Disable peripherals and GPIO Clocks ################################*/
   /* De-initialize the ADC Channel GPIO pin */
-  HAL_GPIO_DeInit(ADCx_CHANNEL_GPIO_PORT, ADCx_CHANNEL_PIN);
+  HAL_GPIO_DeInit(ADCx_CHANNEL_GPIO_PORT, ADCx_CHANNEL_X_PIN | ADCx_CHANNEL_Y_PIN);
 }
 
 /**
