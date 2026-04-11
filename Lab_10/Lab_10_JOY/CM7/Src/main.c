@@ -34,10 +34,9 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* ADC handler declaration */
-ADC_HandleTypeDef AdcHandle_x;
-ADC_HandleTypeDef AdcHandle_y;
-
-ADC_ChannelConfTypeDef sConfig;
+ADC_HandleTypeDef AdcHandle;
+ADC_ChannelConfTypeDef sConfig_x;
+ADC_ChannelConfTypeDef sConfig_y;
 
 /* Variable used to get converted value */
 __IO uint16_t uhADCxConvertedValue = 0;
@@ -122,141 +121,121 @@ int main(void)
   /* Add Cortex-M7 user application code here */
 
   /*##-1- Configure the ADC peripheral #######################################*/
-  AdcHandle_x.Instance = ADCx;
+  AdcHandle.Instance = ADCx;
 
-  if (HAL_ADC_DeInit(&AdcHandle_x) != HAL_OK)
+  if (HAL_ADC_DeInit(&AdcHandle) != HAL_OK)
   {
     /* ADC de-initialization Error */
     Error_Handler();
   }
 
-  if (HAL_ADC_DeInit(&AdcHandle_y) != HAL_OK)
-    {
-      /* ADC de-initialization Error */
-      Error_Handler();
-    }
+  AdcHandle.Init.ClockPrescaler           = ADC_CLOCK_ASYNC_DIV2;          /* Asynchronous clock mode, input ADC clock divided by 2*/
+  AdcHandle.Init.Resolution               = ADC_RESOLUTION_16B;            /* 16-bit resolution for converted data */
+  AdcHandle.Init.ScanConvMode             = ENABLE;                       /* Sequencer disabled (ADC conversion on only 1 channel: channel set on rank 1) */
+  AdcHandle.Init.EOCSelection             = ADC_EOC_SINGLE_CONV;           /* EOC flag picked-up to indicate conversion end */
+  AdcHandle.Init.LowPowerAutoWait         = DISABLE;                       /* Auto-delayed conversion feature disabled */
+  AdcHandle.Init.ContinuousConvMode       = ENABLE;                       /* Continuous mode disabled to have only 1 conversion at each conversion trig */
+  AdcHandle.Init.NbrOfConversion          = 1;                             /* Parameter discarded because sequencer is disabled */
+  AdcHandle.Init.DiscontinuousConvMode    = DISABLE;                       /* Parameter discarded because sequencer is disabled */
+  AdcHandle.Init.NbrOfDiscConversion      = 2;                             /* Parameter discarded because sequencer is disabled */
+  AdcHandle.Init.ExternalTrigConv         = ADC_SOFTWARE_START;            /* Software start to trig the 1st conversion manually, without external event */
+  AdcHandle.Init.ExternalTrigConvEdge     = ADC_EXTERNALTRIGCONVEDGE_NONE; /* Parameter discarded because software trigger chosen */
+  AdcHandle.Init.ConversionDataManagement = ADC_CONVERSIONDATA_DR;         /* Regular Conversion data stored in DR register only */
+  AdcHandle.Init.Overrun                  = ADC_OVR_DATA_OVERWRITTEN;      /* DR register is overwritten with the last conversion result in case of overrun */
+  AdcHandle.Init.OversamplingMode         = DISABLE;                       /* No oversampling */
 
-  AdcHandle_x.Init.ClockPrescaler           = ADC_CLOCK_ASYNC_DIV2;          /* Asynchronous clock mode, input ADC clock divided by 2*/
-  AdcHandle_x.Init.Resolution               = ADC_RESOLUTION_16B;            /* 16-bit resolution for converted data */
-  AdcHandle_x.Init.ScanConvMode             = DISABLE;                       /* Sequencer disabled (ADC conversion on only 1 channel: channel set on rank 1) */
-  AdcHandle_x.Init.EOCSelection             = ADC_EOC_SINGLE_CONV;           /* EOC flag picked-up to indicate conversion end */
-  AdcHandle_x.Init.LowPowerAutoWait         = DISABLE;                       /* Auto-delayed conversion feature disabled */
-  AdcHandle_x.Init.ContinuousConvMode       = DISABLE;                       /* Continuous mode disabled to have only 1 conversion at each conversion trig */
-  AdcHandle_x.Init.NbrOfConversion          = 1;                             /* Parameter discarded because sequencer is disabled */
-  AdcHandle_x.Init.DiscontinuousConvMode    = DISABLE;                       /* Parameter discarded because sequencer is disabled */
-  AdcHandle_x.Init.NbrOfDiscConversion      = 1;                             /* Parameter discarded because sequencer is disabled */
-  AdcHandle_x.Init.ExternalTrigConv         = ADC_SOFTWARE_START;            /* Software start to trig the 1st conversion manually, without external event */
-  AdcHandle_x.Init.ExternalTrigConvEdge     = ADC_EXTERNALTRIGCONVEDGE_NONE; /* Parameter discarded because software trigger chosen */
-  AdcHandle_x.Init.ConversionDataManagement = ADC_CONVERSIONDATA_DR;         /* Regular Conversion data stored in DR register only */
-  AdcHandle_x.Init.Overrun                  = ADC_OVR_DATA_OVERWRITTEN;      /* DR register is overwritten with the last conversion result in case of overrun */
-  AdcHandle_x.Init.OversamplingMode         = DISABLE;                       /* No oversampling */
-
-  if (HAL_ADC_Init(&AdcHandle_x) != HAL_OK)
+  if (HAL_ADC_Init(&AdcHandle) != HAL_OK)
   {
     /* ADC initialization Error */
     Error_Handler();
   }
 
-  AdcHandle_y.Instance = ADCx;
-
-
-  AdcHandle_y.Init.ClockPrescaler           = ADC_CLOCK_ASYNC_DIV2;          /* Asynchronous clock mode, input ADC clock divided by 2*/
-  AdcHandle_y.Init.Resolution               = ADC_RESOLUTION_16B;            /* 16-bit resolution for converted data */
-  AdcHandle_y.Init.ScanConvMode             = DISABLE;                       /* Sequencer disabled (ADC conversion on only 1 channel: channel set on rank 1) */
-  AdcHandle_y.Init.EOCSelection             = ADC_EOC_SINGLE_CONV;           /* EOC flag picked-up to indicate conversion end */
-  AdcHandle_y.Init.LowPowerAutoWait         = DISABLE;                       /* Auto-delayed conversion feature disabled */
-  AdcHandle_y.Init.ContinuousConvMode       = DISABLE;                       /* Continuous mode disabled to have only 1 conversion at each conversion trig */
-  AdcHandle_y.Init.NbrOfConversion          = 1;                             /* Parameter discarded because sequencer is disabled */
-  AdcHandle_y.Init.DiscontinuousConvMode    = DISABLE;                       /* Parameter discarded because sequencer is disabled */
-  AdcHandle_y.Init.NbrOfDiscConversion      = 1;                             /* Parameter discarded because sequencer is disabled */
-  AdcHandle_y.Init.ExternalTrigConv         = ADC_SOFTWARE_START;            /* Software start to trig the 1st conversion manually, without external event */
-  AdcHandle_y.Init.ExternalTrigConvEdge     = ADC_EXTERNALTRIGCONVEDGE_NONE; /* Parameter discarded because software trigger chosen */
-  AdcHandle_y.Init.ConversionDataManagement = ADC_CONVERSIONDATA_DR;         /* Regular Conversion data stored in DR register only */
-  AdcHandle_y.Init.Overrun                  = ADC_OVR_DATA_OVERWRITTEN;      /* DR register is overwritten with the last conversion result in case of overrun */
-    AdcHandle_y.Init.OversamplingMode         = DISABLE;
-
-    if (HAL_ADC_Init(&AdcHandle_y) != HAL_OK)
-      {
-        /* ADC initialization Error */
-        Error_Handler();
-      }
-
-
   /*##-2- Configure ADC regular channel ######################################*/
-  sConfig.Channel      = ADCx_CHANNEL;                /* Sampled channel number */
-  sConfig.Rank         = ADC_REGULAR_RANK_1;          /* Rank of sampled channel number ADCx_CHANNEL */
-  sConfig.SamplingTime = ADC_SAMPLETIME_8CYCLES_5;    /* Sampling time (number of clock cycles unit) */
-  sConfig.SingleDiff   = ADC_SINGLE_ENDED;            /* Single-ended input channel */
-  sConfig.OffsetNumber = ADC_OFFSET_NONE;             /* No offset subtraction */
-  sConfig.Offset = 0;                                 /* Parameter discarded because offset correction is disabled */
+  sConfig_x.Channel      = ADCx_CHANNEL_X;                /* Sampled channel number */
+  sConfig_x.Rank         = ADC_REGULAR_RANK_1;          /* Rank of sampled channel number ADCx_CHANNEL */
+  sConfig_x.SamplingTime = ADC_SAMPLETIME_8CYCLES_5;    /* Sampling time (number of clock cycles unit) */
+  sConfig_x.SingleDiff   = ADC_SINGLE_ENDED;            /* Single-ended input channel */
+  sConfig_x.OffsetNumber = ADC_OFFSET_NONE;             /* No offset subtraction */
+  sConfig_x.Offset = 0;                                 /* Parameter discarded because offset correction is disabled */
 
+  sConfig_y.Channel      = ADCx_CHANNEL_Y;                /* Sampled channel number */
+  sConfig_y.Rank         = ADC_REGULAR_RANK_1;          /* Rank of sampled channel number ADCx_CHANNEL */
+  sConfig_y.SamplingTime = ADC_SAMPLETIME_8CYCLES_5;    /* Sampling time (number of clock cycles unit) */
+  sConfig_y.SingleDiff   = ADC_SINGLE_ENDED;            /* Single-ended input channel */
+    sConfig_y.OffsetNumber = ADC_OFFSET_NONE;             /* No offset subtraction */
+    sConfig_y.Offset = 0;
 
-  if (HAL_ADC_ConfigChannel(&AdcHandle_x, &sConfig) != HAL_OK)
+  if (HAL_ADC_ConfigChannel(&AdcHandle, &sConfig_x) != HAL_OK)
   {
     /* Channel Configuration Error */
     Error_Handler();
   }
 
-  /* Run the ADC calibration in single-ended mode */
-  if (HAL_ADCEx_Calibration_Start(&AdcHandle_x, ADC_CALIB_OFFSET_LINEARITY, ADC_SINGLE_ENDED) != HAL_OK)
-  {
-    /* Calibration Error */
-    Error_Handler();
-  }
-
-  if (HAL_ADC_ConfigChannel(&AdcHandle_y, &sConfig) != HAL_OK)
+  if (HAL_ADC_ConfigChannel(&AdcHandle, &sConfig_y) != HAL_OK)
     {
       /* Channel Configuration Error */
       Error_Handler();
     }
 
-    /* Run the ADC calibration in single-ended mode */
-    if (HAL_ADCEx_Calibration_Start(&AdcHandle_y, ADC_CALIB_OFFSET_LINEARITY, ADC_SINGLE_ENDED) != HAL_OK)
-    {
-      /* Calibration Error */
-      Error_Handler();
-    }
+  /* Run the ADC calibration in single-ended mode */
+  if (HAL_ADCEx_Calibration_Start(&AdcHandle, ADC_CALIB_OFFSET_LINEARITY, ADC_SINGLE_ENDED) != HAL_OK)
+  {
+    /* Calibration Error */
+    Error_Handler();
+  }
 
-    float value_x = 0.0f;
-    float value_y = 0.0f;
+  uint16_t value_x = 0;
+  uint16_t value_y = 0;
+
   /* Infinite loop */
   while (1)
   {
     /*##-3- Start the conversion process #######################################*/
-    if (HAL_ADC_Start(&AdcHandle_x) != HAL_OK)
+    if (HAL_ADC_Start(&AdcHandle) != HAL_OK)
     {
       /* Start Conversation Error */
       Error_Handler();
     }
 
-    if (HAL_ADC_Start(&AdcHandle_y) != HAL_OK)
-        {
-          /* Start Conversation Error */
-          Error_Handler();
-        }
-
     /*##-4- Wait for the end of conversion #####################################*/
     /*  For simplicity reasons, this example is just waiting till the end of the
         conversion, but application may perform other tasks while conversion
         operation is ongoing. */
-    if (HAL_ADC_PollForConversion(&AdcHandle_x, 10) != HAL_OK || HAL_ADC_PollForConversion(&AdcHandle_y, 10) != HAL_OK)
+    if (HAL_ADC_PollForConversion(&AdcHandle, 10) != HAL_OK)
     {
       /* End Of Conversion flag not set on time */
       Error_Handler();
     }
     else
     {
+    	value_x = HAL_ADC_GetValue(&AdcHandle);
       /* ADC conversion completed */
       /*##-5- Get the converted value of regular channel  ########################*/
-      value_x = HAL_ADC_GetValue(&AdcHandle_x);
-      value_y = HAL_ADC_GetValue(&AdcHandle_y);
-
-      printf("%5d ", value_x);
-      printf("%5d ", value_y);
-
+      uint16_t ADCxConvertedValue_x = value_x * 100 / 4096;
+      printf("%.1fV\r\n", ADCxConvertedValue_x);
     }
 
-    HAL_Delay(250);
+    if (HAL_ADC_Start(&AdcHandle) != HAL_OK)
+        {
+          /* Start Conversation Error */
+          Error_Handler();
+        }
+
+    if (HAL_ADC_PollForConversion(&AdcHandle, 10) != HAL_OK)
+        {
+          /* End Of Conversion flag not set on time */
+          Error_Handler();
+        }
+        else
+        {
+        	value_y = HAL_ADC_GetValue(&AdcHandle);
+          /* ADC conversion completed */
+          /*##-5- Get the converted value of regular channel  ########################*/
+          uint16_t ADCxConvertedValue_y = value_y * 100 / 4096;
+          printf("%.1fV\r\n", ADCxConvertedValue_y);
+        }
+
+    HAL_Delay(1);
   }
 }
 

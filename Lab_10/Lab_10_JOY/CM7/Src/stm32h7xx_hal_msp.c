@@ -84,8 +84,7 @@ void HAL_MspDeInit(void)
   */
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 {
-  GPIO_InitTypeDef GPIO_InitStruct_x;
-  GPIO_InitTypeDef GPIO_InitStruct_y;
+  GPIO_InitTypeDef GPIO_InitStruct;
 
   /*##-1- Enable peripherals and GPIO Clocks #################################*/
   /* ADC Periph clock enable */
@@ -97,15 +96,10 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 
   /*##-2- Configure peripheral GPIO ##########################################*/
   /* ADC Channel GPIO pin configuration */
-  GPIO_InitStruct_x.Pin = ADCx_CHANNEL_X_PIN;
-  GPIO_InitStruct_x.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct_x.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct_x);
-
-  GPIO_InitStruct_y.Pin = ADCx_CHANNEL_Y_PIN;
-  GPIO_InitStruct_y.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct_y.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct_y);
+  GPIO_InitStruct.Pin = ADCx_CHANNEL_X_PIN | ADCx_CHANNEL_Y_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct);
 }
 
 
@@ -129,8 +123,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef *hadc)
 
   /*##-2- Disable peripherals and GPIO Clocks ################################*/
   /* De-initialize the ADC Channel GPIO pin */
-  HAL_GPIO_DeInit(ADCx_CHANNEL_GPIO_PORT, ADCx_CHANNEL_X_PIN);
-  HAL_GPIO_DeInit(ADCx_CHANNEL_GPIO_PORT, ADCx_CHANNEL_Y_PIN);
+  HAL_GPIO_DeInit(ADCx_CHANNEL_GPIO_PORT, ADCx_CHANNEL_PIN);
 }
 
 /**

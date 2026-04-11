@@ -27,7 +27,7 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Definition for ADCx clock resources */
-#define ADCx                            ADC1
+#define ADCx                            ADC3
 #define ADCx_CLK_ENABLE()               __HAL_RCC_ADC3_CLK_ENABLE()
 #define ADCx_CHANNEL_GPIO_CLK_ENABLE()  __HAL_RCC_GPIOF_CLK_ENABLE()
 
@@ -35,13 +35,13 @@
 #define ADCx_RELEASE_RESET()            __HAL_RCC_ADC3_RELEASE_RESET()
 
 /* Definition for ADCx Channel Pin */
-#define ADCx_CHANNEL_X_PIN                GPIO_PIN_3
-#define ADCx_CHANNEL_Y_PIN                GPIO_PIN_8
+#define ADCx_CHANNEL_X_PIN                GPIO_PIN_6
+#define ADCx_CHANNEL_Y_PIN                GPIO_PIN_7
 #define ADCx_CHANNEL_GPIO_PORT          GPIOF
 
 /* Definition for ADCx's Channel */
-#define ADCx_CHANNEL                    ADC_CHANNEL_2
-
+#define ADCx_CHANNEL_X                    ADC_CHANNEL_3
+#define ADCx_CHANNEL_Y                    ADC_CHANNEL_8
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
