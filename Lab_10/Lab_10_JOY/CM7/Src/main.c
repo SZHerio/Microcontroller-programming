@@ -135,9 +135,9 @@ int main(void)
   AdcHandle.Init.EOCSelection             = ADC_EOC_SINGLE_CONV;           /* EOC flag picked-up to indicate conversion end */
   AdcHandle.Init.LowPowerAutoWait         = DISABLE;                       /* Auto-delayed conversion feature disabled */
   AdcHandle.Init.ContinuousConvMode       = ENABLE;                       /* Continuous mode disabled to have only 1 conversion at each conversion trig */
-  AdcHandle.Init.NbrOfConversion          = 1;                             /* Parameter discarded because sequencer is disabled */
-  AdcHandle.Init.DiscontinuousConvMode    = DISABLE;                       /* Parameter discarded because sequencer is disabled */
-  AdcHandle.Init.NbrOfDiscConversion      = 2;                             /* Parameter discarded because sequencer is disabled */
+  AdcHandle.Init.NbrOfConversion          = 2;                             /* Parameter discarded because sequencer is disabled */
+  AdcHandle.Init.DiscontinuousConvMode    = ENABLE;                       /* Parameter discarded because sequencer is disabled */
+  AdcHandle.Init.NbrOfDiscConversion      = 1;                             /* Parameter discarded because sequencer is disabled */
   AdcHandle.Init.ExternalTrigConv         = ADC_SOFTWARE_START;            /* Software start to trig the 1st conversion manually, without external event */
   AdcHandle.Init.ExternalTrigConvEdge     = ADC_EXTERNALTRIGCONVEDGE_NONE; /* Parameter discarded because software trigger chosen */
   AdcHandle.Init.ConversionDataManagement = ADC_CONVERSIONDATA_DR;         /* Regular Conversion data stored in DR register only */
@@ -159,7 +159,7 @@ int main(void)
   sConfig_x.Offset = 0;                                 /* Parameter discarded because offset correction is disabled */
 
   sConfig_y.Channel      = ADCx_CHANNEL_Y;                /* Sampled channel number */
-  sConfig_y.Rank         = ADC_REGULAR_RANK_1;          /* Rank of sampled channel number ADCx_CHANNEL */
+  sConfig_y.Rank         = ADC_REGULAR_RANK_2;          /* Rank of sampled channel number ADCx_CHANNEL */
   sConfig_y.SamplingTime = ADC_SAMPLETIME_8CYCLES_5;    /* Sampling time (number of clock cycles unit) */
   sConfig_y.SingleDiff   = ADC_SINGLE_ENDED;            /* Single-ended input channel */
     sConfig_y.OffsetNumber = ADC_OFFSET_NONE;             /* No offset subtraction */
@@ -211,9 +211,10 @@ int main(void)
     	value_x = HAL_ADC_GetValue(&AdcHandle);
       /* ADC conversion completed */
       /*##-5- Get the converted value of regular channel  ########################*/
-      uint16_t ADCxConvertedValue_x = value_x * 100 / 4096;
-      printf("%.1fV\r\n", ADCxConvertedValue_x);
+    	uint16_t ADCxConvertedValue_x = (value_x - 32768) * 100 / 32768;
+    	printf("%d\r\n", ADCxConvertedValue_x);
     }
+
 
     if (HAL_ADC_Start(&AdcHandle) != HAL_OK)
         {
@@ -231,10 +232,11 @@ int main(void)
         	value_y = HAL_ADC_GetValue(&AdcHandle);
           /* ADC conversion completed */
           /*##-5- Get the converted value of regular channel  ########################*/
-          uint16_t ADCxConvertedValue_y = value_y * 100 / 4096;
-          printf("%.1fV\r\n", ADCxConvertedValue_y);
+          uint16_t ADCxConvertedValue_y = (value_y - 32768) * 100 / 32768;
+          printf("%d\r\n", ADCxConvertedValue_y);
         }
 
+    printf("\n");
     HAL_Delay(1);
   }
 }

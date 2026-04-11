@@ -40,8 +40,8 @@
 #define ADCx_CHANNEL_GPIO_PORT          GPIOF
 
 /* Definition for ADCx's Channel */
-#define ADCx_CHANNEL_X                    ADC_CHANNEL_3
-#define ADCx_CHANNEL_Y                    ADC_CHANNEL_8
+#define ADCx_CHANNEL_X                    ADC_CHANNEL_8
+#define ADCx_CHANNEL_Y                    ADC_CHANNEL_3
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
