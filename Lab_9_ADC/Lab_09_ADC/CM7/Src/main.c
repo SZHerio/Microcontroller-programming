@@ -173,6 +173,8 @@ int main(void)
     Error_Handler();
   }
 
+  DacHandle.Instance = DACx;
+
   if (HAL_DAC_DeInit(&DacHandle) != HAL_OK)
     {
       /* DeInitialization Error */
@@ -199,44 +201,22 @@ int main(void)
 
     float DACValue_0 = 0;
     float DACValue_15 = 1.5 * 256 / 3.3;
-    float DACValue_30 = 3 * 256 / 3.3;;
+    float DACValue_33 = 3.3 * 256 / 3.3;;
 
+    float DACValue[3] = {DACValue_0, DACValue_15, DACValue_33};
 
-    uint16_t data_queue;
+    uint16_t data_queue = 0;
 
   /* Infinite loop */
   while (1)
   {
-	  switch(data_queue)
-	{
-	  case(0):
-		if (HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL, DAC_ALIGN_8B_R, DACValue_0) != HAL_OK)
-		    {
-		      /* Setting value Error */
-		      Error_Handler();
-		    }
-			  ++data_queue;
-			  break;
+	  data_queue = data_queue % 3;
 
-	  case(1):
-		if (HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL, DAC_ALIGN_8B_R, DACValue_15) != HAL_OK)
-		{
-			/* Setting value Error */
-			Error_Handler();
-
-		}
-			  ++data_queue;
-	  		  break;
-
-	  case(2):
-				if (HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL, DAC_ALIGN_8B_R, DACValue_30) != HAL_OK)
-				{
-					/* Setting value Error */
-					Error_Handler();
-				}
-	  	  	  data_queue = 0;
-	  		  break;
-	}
+	  if (HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL, DAC_ALIGN_8B_R, DACValue[data_queue++]) != HAL_OK)
+	  		    {
+	  		      /* Setting value Error */
+	  		      Error_Handler();
+	  		    }
 
 	  if (HAL_DAC_Start(&DacHandle, DACx_CHANNEL) != HAL_OK)
 	      {
